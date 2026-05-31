@@ -1,0 +1,17 @@
+.git
+.github
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.db
+.pytest_cache
+.env
+.venv
+venv
+tests
+Dockerfile
+.dockerignore
+implementation_plan.md
+task.md
+walkthrough.md

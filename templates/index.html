@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WanderAI - Your Premium AI-Powered Travel Planner. Plan your next adventure with state-of-the-art specialist agents.">
+    <title>WanderAI - Your Premium AI Travel Planner</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-dark: #090d16;
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-card-hover: rgba(31, 41, 55, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(99, 102, 241, 0.6);
+            --primary: #10b981; /* Teal/emerald */
+            --primary-light: #34d399;
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --secondary: #6366f1; /* Indigo */
+            --secondary-glow: rgba(99, 102, 241, 0.25);
+            --accent: #f59e0b; /* Amber */
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dark: #64748b;
+            --glass-blur: blur(16px);
+            --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Glassmorphic Container & App Layout */
+        header {
+            background: rgba(9, 13, 22, 0.6);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo-icon {
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px var(--primary-glow));
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .session-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .session-badge i {
+            color: var(--primary);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+            padding: 0.4rem 0.8rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-reset:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        /* Main Workspace layout */
+        main {
+            flex: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 2rem;
+            height: calc(100vh - 75px);
+            overflow: hidden;
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+        }
+
+        /* Left Side: Setup & Chat Control */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .premium-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .setup-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .setup-title i {
+            color: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .input-control {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider-val {
+            min-width: 3.5rem;
+            text-align: right;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* Segmented Button Group (Budget) */
+        .segmented-control {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 0.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .segmented-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .segmented-btn.active {
+            background: var(--secondary);
+            color: var(--text-main);
+            box-shadow: 0 4px 12px var(--secondary-glow);
+        }
+
+        /* Interest Chip Multi-select */
+        .interests-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .interest-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .interest-chip.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: var(--text-main);
+            padding: 0.9rem;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.2rem;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(99, 102, 241, 0.45);
+        }
+
+        /* Suggestions Chips Box */
+        .suggestions-box {
+            margin-bottom: 0.5rem;
+        }
+
+        .suggestions-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .suggestions-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border-color: var(--border-focus);
+        }
+
+        /* Chat interface container */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 460px);
+            min-height: 250px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-right: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-msg {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .chat-msg.user {
+            align-self: flex-end;
+            background: var(--secondary);
+            color: var(--text-main);
+            border-bottom-right-radius: 2px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .chat-msg.assistant {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-msg.system {
+            align-self: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-radius: 99px;
+            padding: 0.25rem 0.75rem;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            height: 44px;
+            transition: var(--transition-smooth);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        .btn-send {
+            background: var(--primary);
+            border: none;
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-send:hover {
+            background: var(--primary-light);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.5rem 1rem;
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            border-bottom-left-radius: 2px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Right Side: Main Workspace (Tabs + Dashboard) */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 1.2rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-light);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .tabs-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .tab-pane {
+            display: none;
+            height: 100%;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Empty State Dashboard style */
+        .empty-dashboard {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 5px 15px rgba(99, 102, 241, 0.2));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .empty-dashboard h3 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* TAB 1: Weather Tab */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .weather-hero {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .weather-temp {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .weather-desc-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary-light);
+            border: 1px solid var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-details-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .weather-detail-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .weather-detail-item i {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-top: 0.2rem;
+        }
+
+        .weather-detail-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        .weather-detail-content {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* TAB 2: Itinerary Tab (Accordion Timeline) */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .timeline-day-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .timeline-day-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .timeline-day-header {
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-day-header h4 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .timeline-day-header h4 span {
+            background: var(--primary);
+            color: var(--bg-dark);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .day-arrow {
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        .timeline-day-card.active .day-arrow {
+            transform: rotate(180deg);
+            color: var(--primary-light);
+        }
+
+        .timeline-day-content {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-day-card.active .timeline-day-content {
+            display: block;
+        }
+
+        /* Activity items */
+        .activity-blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+        }
+
+        .activity-blocks::before {
+            content: '';
+            position: absolute;
+            left: 21px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-block {
+            display: grid;
+            grid-template-columns: 44px 1fr;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .activity-time-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+
+        .activity-details {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .activity-title-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.4rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--primary-light);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-weight: 500;
+        }
+
+        .activity-location {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .activity-location i {
+            color: var(--danger);
+        }
+
+        .activity-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Day Extra Info */
+        .day-extra-info {
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px dashed var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .day-extra-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .day-transport {
+            display: flex;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.01);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .day-transport i {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 0.2rem;
+        }
+
+        .day-tips {
+            display: flex;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.01);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .day-tips i {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        /* TAB 3: Hotel and Restaurants Tab */
+        .stays-eats-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .cards-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stays-eats-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .stays-eats-title i {
+            color: var(--secondary);
+        }
+
+        .hotel-card, .restaurant-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition-smooth);
+        }
+
+        .hotel-card:hover, .restaurant-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.25);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+        }
+
+        .hotel-tier-badge {
+            align-self: flex-start;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .hotel-tier-badge.luxury { background: rgba(245, 158, 11, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+        .hotel-tier-badge.mid-range { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid var(--secondary); }
+        .hotel-tier-badge.budget { background: rgba(16, 185, 129, 0.2); color: var(--primary-light); border: 1px solid var(--primary); }
+
+        .hotel-name, .restaurant-name {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-desc, .restaurant-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .hotel-footer, .restaurant-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .hotel-price {
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .hotel-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--accent);
+        }
+
+        .restaurant-dish-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .restaurant-dishes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+
+        /* TAB 4: Budget Analyzer */
+        .budget-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .budget-tier-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem;
+            border-radius: 8px;
+            align-self: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .budget-tier-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1.2rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition-smooth);
+        }
+
+        .budget-tier-tab.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .budget-total-hero {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .budget-total-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+
+        .budget-total-val {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .budget-bars {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .budget-bar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .budget-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .budget-bar-label .category {
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .budget-bar-label .value {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+        }
+
+        /* TAB 5: Interactive Packing Checklist */
+        .packing-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .packing-category-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .packing-category-header {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .packing-category-header i {
+            color: var(--secondary);
+        }
+
+        .packing-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .packing-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .packing-item-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .packing-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .packing-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--text-muted);
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .packing-checkbox i {
+            font-size: 0.65rem;
+            color: transparent;
+        }
+
+        .packing-item-row.checked .packing-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .packing-item-row.checked .packing-checkbox i {
+            color: var(--bg-dark);
+        }
+
+        .packing-item-row.checked .packing-item-name {
+            text-decoration: line-through;
+            color: var(--text-dark);
+        }
+
+        .packing-item-qty {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .packing-necessity-badge {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+        .packing-necessity-badge.required { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+        .packing-necessity-badge.optional { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+
+        /* General Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Header -->
+    <header>
+        <a href="#" class="logo-container">
+            <i class="fa-solid fa-compass logo-icon"></i>
+            <span class="logo-text">WanderAI</span>
+        </a>
+        <div class="header-actions">
+            <div class="session-badge">
+                <i class="fa-solid fa-bolt"></i>
+                <span id="session-display">Session: Active</span>
+            </div>
+            <button class="btn-reset" onclick="resetPlanner()" aria-label="Reset planning session">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+            </button>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main>
+        
+        <!-- Left Column: Search Form & Chat -->
+        <div class="left-panel">
+            
+            <!-- Setup Parameters Panel -->
+            <div class="premium-card">
+                <h3 class="setup-title"><i class="fa-solid fa-sliders"></i> Trip Parameters</h3>
+                
+                <!-- Destination input & suggestion chips -->
+                <div class="form-group">
+                    <label for="dest-input">Where to?</label>
+                    <input type="text" id="dest-input" class="input-control" placeholder="e.g. Kyoto, Japan" value="Paris">
+                </div>
+
+                <div class="suggestions-box">
+                    <div class="suggestions-title">Popular Ideas</div>
+                    <div class="suggestions-chips">
+                        <span class="suggestion-chip" onclick="applySuggestion('Paris')">Paris</span>
+                        <span class="suggestion-chip" onclick="applySuggestion('Kyoto, Japan')">Kyoto</span>
+                        <span class="suggestion-chip" onclick="applySuggestion('New York City')">New York</span>
+                        <span class="suggestion-chip" onclick="applySuggestion('Rome, Italy')">Rome</span>
+                        <span class="suggestion-chip" onclick="applySuggestion('Bali, Indonesia')">Bali</span>
+                    </div>
+                </div>
+
+                <!-- Duration Slider -->
+                <div class="form-group">
+                    <label for="days-input">Duration (Days)</label>
+                    <div class="slider-container">
+                        <input type="range" id="days-input" class="input-control" min="1" max="15" value="5" oninput="updateDaysDisplay(this.value)">
+                        <span id="days-val" class="slider-val">5 Days</span>
+                    </div>
+                </div>
+
+                <!-- Budget Tier Selection -->
+                <div class="form-group">
+                    <label>Budget Tier</label>
+                    <div class="segmented-control" id="budget-segment">
+                        <button class="segmented-btn" onclick="setBudgetTier('Budget')">Budget</button>
+                        <button class="segmented-btn active" onclick="setBudgetTier('Mid-range')">Mid</button>
+                        <button class="segmented-btn" onclick="setBudgetTier('Luxury')">Luxury</button>
+                    </div>
+                </div>
+
+                <!-- Travelers counter -->
+                <div class="form-group">
+                    <label for="travelers-input">Travelers</label>
+                    <input type="number" id="travelers-input" class="input-control" min="1" max="10" value="1">
+                </div>
+
+                <!-- Interests Selection -->
+                <div class="form-group">
+                    <label>Interests</label>
+                    <div class="interests-container">
+                        <span class="interest-chip" onclick="toggleInterest(this, 'sightseeing')"><i class="fa-solid fa-camera"></i> Sightseeing</span>
+                        <span class="interest-chip" onclick="toggleInterest(this, 'food')"><i class="fa-solid fa-utensils"></i> Foodie</span>
+                        <span class="interest-chip" onclick="toggleInterest(this, 'history')"><i class="fa-solid fa-landmark"></i> History</span>
+                        <span class="interest-chip" onclick="toggleInterest(this, 'nature')"><i class="fa-solid fa-tree"></i> Nature</span>
+                        <span class="interest-chip" onclick="toggleInterest(this, 'shopping')"><i class="fa-solid fa-bag-shopping"></i> Shopping</span>
+                    </div>
+                </div>
+
+                <!-- Generate/Submit button -->
+                <button class="btn-submit" onclick="generateTravelPlan()" id="btn-generate">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Plan
+                </button>
+            </div>
+
+            <!-- Chat / Conversational Box -->
+            <div class="premium-card chat-section">
+                <h3 class="setup-title"><i class="fa-solid fa-comments"></i> Chat Assistant</h3>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-msg assistant">
+                        Hi! I am WanderAI. Enter a destination and customize parameters above, or chat with me here to draft your custom vacation planner!
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <textarea class="chat-input" id="chat-input" placeholder="Ask to modify the plan..." onkeydown="handleChatSubmit(event)"></textarea>
+                    <button class="btn-send" onclick="sendChatMessage()" aria-label="Send message">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Plan Presentation Board -->
+        <div class="right-panel">
+            
+            <!-- Dashboard navigation tabs -->
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('weather-tab')"><i class="fa-solid fa-cloud-sun"></i> Weather</button>
+                <button class="tab-btn" onclick="switchTab('itinerary-tab')"><i class="fa-solid fa-calendar-day"></i> Itinerary</button>
+                <button class="tab-btn" onclick="switchTab('stays-tab')"><i class="fa-solid fa-hotel"></i> Stays & Eats</button>
+                <button class="tab-btn" onclick="switchTab('budget-tab')"><i class="fa-solid fa-wallet"></i> Expenses</button>
+                <button class="tab-btn" onclick="switchTab('packing-tab')"><i class="fa-solid fa-suitcase-rolling"></i> Packing</button>
+            </div>
+
+            <!-- Dynamic panels -->
+            <div class="tabs-content">
+                
+                <!-- Empty State (Shown initially before plan generation) -->
+                <div id="empty-state" class="empty-dashboard">
+                    <i class="fa-solid fa-earth-americas empty-icon"></i>
+                    <h3>Begin Your Journey</h3>
+                    <p>Enter a destination above and click <strong>Generate Plan</strong> to start loading your custom itineraries.</p>
+                </div>
+
+                <!-- 1. Weather Tab Pane -->
+                <div class="tab-pane" id="weather-pane">
+                    <div class="weather-grid">
+                        <div class="weather-hero">
+                            <i class="fa-solid fa-cloud-sun-rain" style="font-size: 3rem; color: var(--primary-light); margin-bottom: 1rem;"></i>
+                            <div class="weather-temp" id="weather-temp-val">--°F</div>
+                            <div class="weather-desc-badge" id="weather-conditions-val">No Forecast</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);" id="weather-best-time-val">Best Season: --</p>
+                        </div>
+                        <div class="weather-details-card">
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-compass"></i>
+                                <div>
+                                    <div class="weather-detail-title">Geocoded Location</div>
+                                    <div class="weather-detail-content" id="weather-geo-val">---</div>
+                                </div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <div>
+                                    <div class="weather-detail-title">Weather Tips</div>
+                                    <div class="weather-detail-content" id="weather-tips-val">Enter details and fetch plan.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Itinerary Tab Pane -->
+                <div class="tab-pane" id="itinerary-pane">
+                    <div class="timeline" id="timeline-container">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+
+                <!-- 3. Stays and Eats Pane -->
+                <div class="tab-pane" id="stays-pane">
+                    <div class="stays-eats-sections">
+                        
+                        <div>
+                            <h4 class="stays-eats-title"><i class="fa-solid fa-bed"></i> Curated Stays</h4>
+                            <div class="cards-row" id="hotel-cards-container">
+                                <!-- Dynamic stays -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="stays-eats-title"><i class="fa-solid fa-utensils"></i> Dining Recommendations</h4>
+                            <div class="cards-row" id="restaurant-cards-container">
+                                <!-- Dynamic restaurants -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 4. Expense Analytics Pane -->
+                <div class="tab-pane" id="budget-pane">
+                    <div class="budget-dashboard">
+                        <div class="budget-tier-selector">
+                            <button class="budget-tier-tab" id="btn-tier-budget" onclick="switchBudgetTierDetails('budget')">Budget</button>
+                            <button class="budget-tier-tab active" id="btn-tier-mid" onclick="switchBudgetTierDetails('mid_range')">Mid-range</button>
+                            <button class="budget-tier-tab" id="btn-tier-lux" onclick="switchBudgetTierDetails('luxury')">Luxury</button>
+                        </div>
+
+                        <div class="budget-total-hero">
+                            <div class="budget-total-title">Estimated Total Cost</div>
+                            <div class="budget-total-val" id="budget-total-display">$--</div>
+                        </div>
+
+                        <div class="budget-bars">
+                            <div class="budget-bar-group">
+                                <div class="budget-bar-label">
+                                    <span class="category"><i class="fa-solid fa-plane"></i> Flights</span>
+                                    <span class="value" id="budget-flights-val">$--</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="fill-flights"></div>
+                                </div>
+                            </div>
+
+                            <div class="budget-bar-group">
+                                <div class="budget-bar-label">
+                                    <span class="category"><i class="fa-solid fa-hotel"></i> Accommodations</span>
+                                    <span class="value" id="budget-hotels-val">$--</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="fill-hotels"></div>
+                                </div>
+                            </div>
+
+                            <div class="budget-bar-group">
+                                <div class="budget-bar-label">
+                                    <span class="category"><i class="fa-solid fa-utensils"></i> Meals & Drinks</span>
+                                    <span class="value" id="budget-food-val">$--</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="fill-food"></div>
+                                </div>
+                            </div>
+
+                            <div class="budget-bar-group">
+                                <div class="budget-bar-label">
+                                    <span class="category"><i class="fa-solid fa-map-location-dot"></i> Sightseeing & Activities</span>
+                                    <span class="value" id="budget-activities-val">$--</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="fill-activities"></div>
+                                </div>
+                            </div>
+
+                            <div class="budget-bar-group">
+                                <div class="budget-bar-label">
+                                    <span class="category"><i class="fa-solid fa-bus"></i> Local Transport</span>
+                                    <span class="value" id="budget-transport-val">$--</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" id="fill-transport"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 5. Interactive Packing Checklist Pane -->
+                <div class="tab-pane" id="packing-pane">
+                    <div class="packing-dashboard" id="packing-dashboard-container">
+                        <!-- Dynamically generated categories -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Vanilla Javascript Logic -->
+    <script>
+        // Session ID generator/cacher
+        let sessionId = localStorage.getItem('wanderai_session_id');
+        if (!sessionId) {
+            sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('wanderai_session_id', sessionId);
+        }
+        document.getElementById('session-display').textContent = `Session: ${sessionId}`;
+
+        // App State
+        let currentBudgetTier = 'Mid-range';
+        let selectedInterests = [];
+        let currentActiveTab = 'weather-tab';
+        let activePlanData = null;
+
+        // Load cached plan if any
+        window.addEventListener('load', () => {
+            const cached = localStorage.getItem(`wanderai_plan_${sessionId}`);
+            if (cached) {
+                try {
+                    activePlanData = JSON.parse(cached);
+                    renderPlanDashboard(activePlanData);
+                } catch(e) {
+                    console.error("Error loading cached plan", e);
+                }
+            }
+        });
+
+        function updateDaysDisplay(val) {
+            document.getElementById('days-val').textContent = `${val} Days`;
+        }
+
+        function setBudgetTier(tier) {
+            currentBudgetTier = tier;
+            const buttons = document.querySelectorAll('#budget-segment .segmented-btn');
+            buttons.forEach(btn => {
+                if(btn.textContent.trim() === 'Mid' && tier === 'Mid-range') {
+                    btn.classList.add('active');
+                } else if(btn.textContent.trim() === tier) {
+                    btn.classList.add('active');
+                } else if (btn.textContent.trim() === 'Luxury' && tier === 'Luxury') {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleInterest(element, interest) {
+            element.classList.toggle('active');
+            if (element.classList.contains('active')) {
+                if (!selectedInterests.includes(interest)) {
+                    selectedInterests.push(interest);
+                }
+            } else {
+                selectedInterests = selectedInterests.filter(i => i !== interest);
+            }
+        }
+
+        function applySuggestion(dest) {
+            document.getElementById('dest-input').value = dest;
+        }
+
+        function switchTab(tabId) {
+            currentActiveTab = tabId;
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(tabId)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Toggle panes
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            const activePaneId = tabId.replace('-tab', '-pane');
+            const pane = document.getElementById(activePaneId);
+            if (pane) pane.classList.add('active');
+
+            // Trigger progress bar animations if budget tab is selected
+            if (tabId === 'budget-tab' && activePlanData) {
+                animateProgressBars();
+            }
+        }
+
+        // Add Message to Chat UI
+        function appendChatMessage(role, text) {
+            const container = document.getElementById('chat-messages');
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-msg', role);
+            bubble.textContent = text;
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Show/Hide Typing Indicator
+        function toggleTypingIndicator(show) {
+            const container = document.getElementById('chat-messages');
+            let indicator = document.getElementById('typing-indicator-el');
+            
+            if (show) {
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'typing-indicator-el';
+                    indicator.classList.add('typing-indicator');
+                    indicator.innerHTML = `
+                        <span>Planning</span>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    `;
+                    container.appendChild(indicator);
+                }
+                container.scrollTop = container.scrollHeight;
+            } else if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // Main Generation Call
+        async function generateTravelPlan() {
+            const destination = document.getElementById('dest-input').value.trim();
+            const days = parseInt(document.getElementById('days-input').value);
+            const travelers = parseInt(document.getElementById('travelers-input').value);
+            
+            if (!destination) {
+                alert("Please enter a valid destination.");
+                return;
+            }
+
+            const promptMessage = `Plan a ${days}-day trip to ${destination} for ${travelers} traveler(s) with interests in ${selectedInterests.join(', ') || 'sightseeing'} and a ${currentBudgetTier} budget.`;
+            
+            appendChatMessage('user', promptMessage);
+            toggleTypingIndicator(true);
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: promptMessage,
+                        session_id: sessionId,
+                        destination: destination
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Server responded with error status: " + response.status);
+                }
+
+                const data = await response.json();
+                toggleTypingIndicator(false);
+
+                if (data.reply) {
+                    appendChatMessage('assistant', data.reply);
+                }
+
+                if (data.plan) {
+                    activePlanData = data.plan;
+                    localStorage.setItem(`wanderai_plan_${sessionId}`, JSON.stringify(data.plan));
+                    renderPlanDashboard(data.plan);
+                }
+            } catch (e) {
+                console.error(e);
+                toggleTypingIndicator(false);
+                appendChatMessage('assistant', "Sorry, I encountered an issue compiling the travel plan. Please check the backend services.");
+            }
+        }
+
+        // Chat Message Submission (Follow-ups)
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+            appendChatMessage('user', message);
+            toggleTypingIndicator(true);
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("HTTP error: " + response.status);
+                }
+
+                const data = await response.json();
+                toggleTypingIndicator(false);
+
+                if (data.reply) {
+                    appendChatMessage('assistant', data.reply);
+                }
+
+                if (data.plan) {
+                    activePlanData = data.plan;
+                    localStorage.setItem(`wanderai_plan_${sessionId}`, JSON.stringify(data.plan));
+                    renderPlanDashboard(data.plan);
+                }
+            } catch(e) {
+                console.error(e);
+                toggleTypingIndicator(false);
+                appendChatMessage('assistant', "I was unable to modify the plan. Please check connection.");
+            }
+        }
+
+        function handleChatSubmit(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        // Reset planner
+        function resetPlanner() {
+            localStorage.removeItem(`wanderai_plan_${sessionId}`);
+            activePlanData = null;
+            
+            // UI elements reset
+            document.getElementById('dest-input').value = 'Paris';
+            document.getElementById('days-input').value = 5;
+            updateDaysDisplay(5);
+            setBudgetTier('Mid-range');
+            document.getElementById('travelers-input').value = 1;
+            
+            document.querySelectorAll('.interest-chip').forEach(c => c.classList.remove('active'));
+            selectedInterests = [];
+            
+            document.getElementById('chat-messages').innerHTML = `
+                <div class="chat-msg assistant">
+                    Session reset. What beautiful place should we explore next?
+                </div>
+            `;
+
+            // Reset tab panes back to empty state
+            document.getElementById('empty-state').style.display = 'flex';
+            document.getElementById('weather-pane').classList.remove('active');
+            document.getElementById('itinerary-pane').classList.remove('active');
+            document.getElementById('stays-pane').classList.remove('active');
+            document.getElementById('budget-pane').classList.remove('active');
+            document.getElementById('packing-pane').classList.remove('active');
+            
+            // Switch active tab indicator to weather
+            switchTab('weather-tab');
+        }
+
+        // Render functions for each Tab
+        function renderPlanDashboard(plan) {
+            // Hide empty state
+            document.getElementById('empty-state').style.display = 'none';
+
+            // 1. Render Weather
+            document.getElementById('weather-temp-val').textContent = plan.weather.temperature || 'N/A';
+            document.getElementById('weather-conditions-val').textContent = plan.weather.conditions || 'N/A';
+            document.getElementById('weather-best-time-val').textContent = `Best Season: ${plan.weather.best_time_to_visit || 'N/A'}`;
+            document.getElementById('weather-geo-val').textContent = plan.destination || 'Selected City';
+            document.getElementById('weather-tips-val').textContent = plan.weather.travel_tips || 'No specific weather advice.';
+
+            // 2. Render Itinerary Accordion
+            const itineraryContainer = document.getElementById('timeline-container');
+            itineraryContainer.innerHTML = '';
+
+            if (plan.itinerary && plan.itinerary.days) {
+                plan.itinerary.days.forEach((day, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('timeline-day-card');
+                    if (index === 0) card.classList.add('active'); // Open first day by default
+
+                    // Header click toggler
+                    card.innerHTML = `
+                        <div class="timeline-day-header" onclick="toggleItineraryDay(this)">
+                            <h4><span>${day.day}</span> Day ${day.day} Overview</h4>
+                            <i class="fa-solid fa-chevron-down day-arrow"></i>
+                        </div>
+                        <div class="timeline-day-content">
+                            <div class="activity-blocks">
+                                
+                                <!-- Morning -->
+                                <div class="activity-block">
+                                    <div class="activity-time-icon"><i class="fa-solid fa-sun"></i></div>
+                                    <div class="activity-details">
+                                        <div class="activity-title-line">
+                                            <span class="activity-title">${day.morning.activity}</span>
+                                            <span class="activity-time">${day.morning.time}</span>
+                                        </div>
+                                        <div class="activity-location"><i class="fa-solid fa-location-dot"></i> ${day.morning.location}</div>
+                                        <p class="activity-desc">${day.morning.description}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Afternoon -->
+                                <div class="activity-block">
+                                    <div class="activity-time-icon"><i class="fa-solid fa-cloud-sun"></i></div>
+                                    <div class="activity-details">
+                                        <div class="activity-title-line">
+                                            <span class="activity-title">${day.afternoon.activity}</span>
+                                            <span class="activity-time">${day.afternoon.time}</span>
+                                        </div>
+                                        <div class="activity-location"><i class="fa-solid fa-location-dot"></i> ${day.afternoon.location}</div>
+                                        <p class="activity-desc">${day.afternoon.description}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Evening -->
+                                <div class="activity-block">
+                                    <div class="activity-time-icon"><i class="fa-solid fa-moon"></i></div>
+                                    <div class="activity-details">
+                                        <div class="activity-title-line">
+                                            <span class="activity-title">${day.evening.activity}</span>
+                                            <span class="activity-time">${day.evening.time}</span>
+                                        </div>
+                                        <div class="activity-location"><i class="fa-solid fa-location-dot"></i> ${day.evening.location}</div>
+                                        <p class="activity-desc">${day.evening.description}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="day-extra-info">
+                                <div class="day-transport">
+                                    <i class="fa-solid fa-train-subway"></i>
+                                    <div>
+                                        <strong style="display:block; font-size:0.85rem; margin-bottom:0.15rem;">Transit Tips</strong>
+                                        <span style="font-size:0.8rem; color:var(--text-muted);">${day.transportation}</span>
+                                    </div>
+                                </div>
+                                <div class="day-tips">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                    <div>
+                                        <strong style="display:block; font-size:0.85rem; margin-bottom:0.15rem;">Local Secret</strong>
+                                        <span style="font-size:0.8rem; color:var(--text-muted);">${day.local_tips.join(', ')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    itineraryContainer.appendChild(card);
+                });
+            }
+
+            // 3. Render Hotels and Restaurants
+            const hotelContainer = document.getElementById('hotel-cards-container');
+            hotelContainer.innerHTML = '';
+            if (plan.hotels_food && plan.hotels_food.hotels) {
+                plan.hotels_food.hotels.forEach(hotel => {
+                    const card = document.createElement('div');
+                    card.classList.add('hotel-card');
+                    
+                    // Create star rating string
+                    let stars = '';
+                    const fullStars = Math.floor(hotel.rating);
+                    for (let i = 0; i < 5; i++) {
+                        if (i < fullStars) {
+                            stars += '<i class="fa-solid fa-star"></i>';
+                        } else {
+                            stars += '<i class="fa-regular fa-star"></i>';
+                        }
+                    }
+
+                    const tierClass = (hotel.tier || 'Mid-range').toLowerCase();
+
+                    card.innerHTML = `
+                        <div>
+                            <span class="hotel-tier-badge ${tierClass}">${hotel.tier}</span>
+                            <h4 class="hotel-name">${hotel.name}</h4>
+                            <p class="hotel-desc">${hotel.description}</p>
+                        </div>
+                        <div class="hotel-footer">
+                            <span class="hotel-price">${hotel.price_range} / night</span>
+                            <span class="hotel-rating">${stars} <span>${hotel.rating}</span></span>
+                        </div>
+                    `;
+                    hotelContainer.appendChild(card);
+                });
+            }
+
+            const restaurantContainer = document.getElementById('restaurant-cards-container');
+            restaurantContainer.innerHTML = '';
+            if (plan.hotels_food && plan.hotels_food.restaurants) {
+                plan.hotels_food.restaurants.forEach(rest => {
+                    const card = document.createElement('div');
+                    card.classList.add('restaurant-card');
+                    
+                    const dishesTags = rest.must_try_dishes.map(dish => `<span class="restaurant-dish-tag">${dish}</span>`).join('');
+
+                    card.innerHTML = `
+                        <div>
+                            <span class="hotel-tier-badge mid-range" style="border-color:var(--primary); background:rgba(16,185,129,0.1); color:var(--primary-light)">${rest.specialty}</span>
+                            <h4 class="restaurant-name">${rest.name}</h4>
+                            <p class="restaurant-desc">${rest.description}</p>
+                            <div class="restaurant-dishes">
+                                ${dishesTags}
+                            </div>
+                        </div>
+                    `;
+                    restaurantContainer.appendChild(card);
+                });
+            }
+
+            // 4. Render Budget Overview & Progress Bars
+            // Set active tier tab selection matching plan parameters
+            const mappedTier = plan.budget === 'Budget' ? 'budget' : (plan.budget === 'Luxury' ? 'luxury' : 'mid_range');
+            switchBudgetTierDetails(mappedTier);
+
+            // 5. Render Packing Categories
+            const packingContainer = document.getElementById('packing-dashboard-container');
+            packingContainer.innerHTML = '';
+
+            const categories = [
+                { name: 'Clothes & Footwear', icon: 'fa-shirt', items: plan.packing.clothes },
+                { name: 'Essential Documents', icon: 'fa-passport', items: plan.packing.documents },
+                { name: 'Devices & Tech', icon: 'fa-laptop', items: plan.packing.electronics },
+                { name: 'Medical & Health', icon: 'fa-prescription-bottle-medical', items: plan.packing.medicines },
+                { name: 'Accessories & Misc', icon: 'fa-umbrella', items: plan.packing.accessories }
+            ];
+
+            categories.forEach(cat => {
+                if (cat.items && cat.items.length > 0) {
+                    const card = document.createElement('div');
+                    card.classList.add('packing-category-card');
+
+                    let itemsHtml = '';
+                    cat.items.forEach((itemObj, index) => {
+                        const safetyId = `packing_${cat.name.replace(/\s+/g, '')}_${index}`;
+                        const necessityClass = itemObj.necessity.toLowerCase() === 'required' ? 'required' : 'optional';
+                        itemsHtml += `
+                            <div class="packing-item-row" id="${safetyId}" onclick="togglePackingItem('${safetyId}')">
+                                <div class="packing-item-left">
+                                    <div class="packing-checkbox"><i class="fa-solid fa-check"></i></div>
+                                    <span class="packing-item-name">${itemObj.item}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:0.4rem;">
+                                    <span class="packing-necessity-badge ${necessityClass}">${itemObj.necessity}</span>
+                                    <span class="packing-item-qty">${itemObj.quantity}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    card.innerHTML = `
+                        <h4 class="packing-category-header"><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h4>
+                        <div class="packing-list-items">
+                            ${itemsHtml}
+                        </div>
+                    `;
+                    packingContainer.appendChild(card);
+                }
+            });
+
+            // Auto navigate to the weather tab pane on new render
+            switchTab(currentActiveTab);
+        }
+
+        // Toggle Accordion Panels
+        function toggleItineraryDay(headerElement) {
+            const card = headerElement.parentElement;
+            const wasActive = card.classList.contains('active');
+            
+            // Collapse all
+            document.querySelectorAll('.timeline-day-card').forEach(c => c.classList.remove('active'));
+            
+            if (!wasActive) {
+                card.classList.add('active');
+            }
+        }
+
+        // Budget tier switching logic inside expense panel
+        function switchBudgetTierDetails(tier) {
+            if (!activePlanData || !activePlanData.budget_details) return;
+            
+            // Remove active classes
+            document.querySelectorAll('.budget-tier-tab').forEach(b => b.classList.remove('active'));
+            
+            let dataTier = null;
+            if (tier === 'budget') {
+                document.getElementById('btn-tier-budget').classList.add('active');
+                dataTier = activePlanData.budget_details.budget_tier;
+            } else if (tier === 'luxury') {
+                document.getElementById('btn-tier-lux').classList.add('active');
+                dataTier = activePlanData.budget_details.luxury_tier;
+            } else {
+                document.getElementById('btn-tier-mid').classList.add('active');
+                dataTier = activePlanData.budget_details.mid_range_tier;
+            }
+
+            if (dataTier) {
+                document.getElementById('budget-total-display').textContent = dataTier.total;
+                document.getElementById('budget-flights-val').textContent = dataTier.flights;
+                document.getElementById('budget-hotels-val').textContent = dataTier.hotels;
+                document.getElementById('budget-food-val').textContent = dataTier.food;
+                document.getElementById('budget-activities-val').textContent = dataTier.activities;
+                document.getElementById('budget-transport-val').textContent = dataTier.local_transport;
+                
+                if (currentActiveTab === 'budget-tab') {
+                    animateProgressBars();
+                }
+            }
+        }
+
+        // Simulated beautiful progressive visual filling
+        function animateProgressBars() {
+            // Assign custom percentages to make gauges realistic comparison
+            const randomWidths = [
+                Math.floor(Math.random() * 40) + 40,
+                Math.floor(Math.random() * 50) + 35,
+                Math.floor(Math.random() * 30) + 45,
+                Math.floor(Math.random() * 40) + 30,
+                Math.floor(Math.random() * 30) + 20
+            ];
+            
+            setTimeout(() => {
+                document.getElementById('fill-flights').style.width = `${randomWidths[0]}%`;
+                document.getElementById('fill-hotels').style.width = `${randomWidths[1]}%`;
+                document.getElementById('fill-food').style.width = `${randomWidths[2]}%`;
+                document.getElementById('fill-activities').style.width = `${randomWidths[3]}%`;
+                document.getElementById('fill-transport').style.width = `${randomWidths[4]}%`;
+            }, 50);
+        }
+
+        // Interactive Packing Item Checklist cross-off
+        function togglePackingItem(itemId) {
+            const row = document.getElementById(itemId);
+            if (row) {
+                row.classList.toggle('checked');
+            }
+        }
+    </script>
+</body>
+</html>
