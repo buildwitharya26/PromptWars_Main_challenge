@@ -1,14 +1,13 @@
 import logging
 import uuid
 from contextlib import asynccontextmanager
-from typing import Dict, Any
 
 from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
 from config import settings, logger
 from agents import TravelOrchestratorAgent, TravelPlanRequest

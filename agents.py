@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 from google import genai
 from google.genai import types
 
-from config import settings
 from tools import geocode_destination, get_us_weather
 
 logger = logging.getLogger("wanderai.agents")
@@ -269,7 +268,7 @@ class BudgetAgent(BaseAgent):
 class PackingAgent(BaseAgent):
     """Responsible for compiling packing lists based on travel factors."""
     
-    async def generate(self, destination: str, days: int, weather_conditions: str) -> PackingResponse:
+    async def generate(self, destination: str, days: int, weather_conditions: str = "") -> PackingResponse:
         logger.info(f"PackingAgent compiling list for: {destination} ({days} days, Weather: {weather_conditions})")
         
         system_instruction = (
@@ -278,10 +277,11 @@ class PackingAgent(BaseAgent):
             "Clothes, Documents, Electronics, Medicines, and Accessories with recommended quantities."
         )
         
-        prompt = (
-            f"Create a packing list for a {days}-day trip to {destination}.\n"
-            f"Weather context: {weather_conditions}."
-        )
+        prompt = f"Create a packing list for a {days}-day trip to {destination}.\n"
+        if weather_conditions:
+            prompt += f"Weather context: {weather_conditions}."
+        else:
+            prompt += "Account for typical weather conditions and activities for this destination."
         
         config = types.GenerateContentConfig(
             response_mime_type="application/json",
@@ -438,14 +438,12 @@ class TravelOrchestratorAgent(BaseModel):
                 itinerary_task = self.itinerary_agent.generate(dest, days, budget, interests, travelers)
                 hotel_food_task = self.hotel_food_agent.generate(dest)
                 budget_task = self.budget_agent.generate(dest, days)
+                packing_task = self.packing_agent.generate(dest, days)
                 
-                # Fetch first 4
-                weather, itinerary, hotel_food, budget_details = await asyncio.gather(
-                    weather_task, itinerary_task, hotel_food_task, budget_task
+                # Fetch all 5 in parallel
+                weather, itinerary, hotel_food, budget_details, packing = await asyncio.gather(
+                    weather_task, itinerary_task, hotel_food_task, budget_task, packing_task
                 )
-                
-                # Generate packing list sequentially using weather conditions from the weather task
-                packing = await self.packing_agent.generate(dest, days, weather.conditions)
                 
                 plan = TravelPlan(
                     destination=dest,

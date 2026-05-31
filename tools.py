@@ -4,6 +4,8 @@ from typing import Dict, Any, Optional
 
 logger = logging.getLogger("wanderai.tools")
 
+_geocode_cache: Dict[str, Dict[str, Any]] = {}
+
 async def geocode_destination(destination: str) -> Optional[Dict[str, Any]]:
     """Geocodes a destination name to get latitude, longitude, and country details.
     
@@ -15,6 +17,11 @@ async def geocode_destination(destination: str) -> Optional[Dict[str, Any]]:
     Returns:
         Dict with latitude, longitude, country_code, is_us, and name, or None if failed.
     """
+    dest_key = destination.strip().lower()
+    if dest_key in _geocode_cache:
+        logger.info(f"Geocoding cache hit for: {destination}")
+        return _geocode_cache[dest_key]
+
     url = "https://geocoding-api.open-meteo.com/v1/search"
     params = {
         "name": destination,
@@ -41,6 +48,7 @@ async def geocode_destination(destination: str) -> Optional[Dict[str, Any]]:
                         "name": result.get("name")
                     }
                     logger.info(f"Geocoding success: {destination} -> {info}")
+                    _geocode_cache[dest_key] = info
                     return info
                 else:
                     logger.warning(f"No geocoding results found for {destination}")

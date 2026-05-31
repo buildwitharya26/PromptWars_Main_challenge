@@ -60,3 +60,28 @@ async def test_get_us_weather_success():
         assert "Today" in result
         assert "72°F" in result
         assert "Sunny" in result
+
+@pytest.mark.asyncio
+async def test_geocode_destination_cache():
+    from tools import _geocode_cache
+    _geocode_cache.clear()
+    
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "results": [{"latitude": 35.6762, "longitude": 139.6503, "country_code": "JP", "name": "Tokyo"}]
+    }
+    
+    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = mock_response
+        
+        # First call (should hit mock API)
+        res1 = await geocode_destination("Tokyo")
+        assert res1["name"] == "Tokyo"
+        assert mock_get.call_count == 1
+        
+        # Second call (should hit cache, no API call)
+        res2 = await geocode_destination("Tokyo")
+        assert res2["name"] == "Tokyo"
+        assert mock_get.call_count == 1  # Still 1, meaning cached
+
