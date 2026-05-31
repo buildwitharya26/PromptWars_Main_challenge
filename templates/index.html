@@ -30,7 +30,7 @@
             --danger: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --text-dark: #64748b;
+            --text-dark: #94a3b8;
             --glass-blur: blur(16px);
             --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1307,7 +1307,7 @@
                 </div>
 
                 <!-- Generate/Submit button -->
-                <button class="btn-submit" onclick="generateTravelPlan()" id="btn-generate">
+                <button class="btn-submit" onclick="generateTravelPlan()" id="btn-generate" aria-label="Generate travel plan">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Plan
                 </button>
             </div>
@@ -1321,7 +1321,7 @@
                     </div>
                 </div>
                 <div class="chat-input-container">
-                    <textarea class="chat-input" id="chat-input" placeholder="Ask to modify the plan..." onkeydown="handleChatSubmit(event)"></textarea>
+                    <textarea class="chat-input" id="chat-input" placeholder="Ask to modify the plan..." onkeydown="handleChatSubmit(event)" aria-label="Chat input message"></textarea>
                     <button class="btn-send" onclick="sendChatMessage()" aria-label="Send message">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>

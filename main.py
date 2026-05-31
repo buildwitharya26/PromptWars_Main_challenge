@@ -1,4 +1,3 @@
-import logging
 import uuid
 from contextlib import asynccontextmanager
 
@@ -17,17 +16,32 @@ from google import genai
 # PYDANTIC INPUT REQUEST MODELS
 # ====================================================
 
+
 class ChatRequest(BaseModel):
-    message: str = Field(..., min_length=1, max_length=1000, description="Chat message from the user")
-    session_id: str = Field(default="", max_length=100, description="Session ID for conversation memory")
-    destination: str = Field(default="", max_length=100, description="Optional target destination")
+    message: str = Field(
+        ..., min_length=1, max_length=1000, description="Chat message from the user"
+    )
+    session_id: str = Field(
+        default="", max_length=100, description="Session ID for conversation memory"
+    )
+    destination: str = Field(
+        default="", max_length=100, description="Optional target destination"
+    )
+
 
 class WeatherRequest(BaseModel):
-    destination: str = Field(..., min_length=1, max_length=100, description="Target destination for weather forecast")
+    destination: str = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Target destination for weather forecast",
+    )
+
 
 # ====================================================
 # LIFESPAN & DEPENDENCY INJECTION
 # ====================================================
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,15 +53,17 @@ async def lifespan(app: FastAPI):
         client = genai.Client(
             vertexai=settings.GOOGLE_GENAI_USE_VERTEXAI,
             project=settings.GOOGLE_CLOUD_PROJECT,
-            location=settings.GOOGLE_CLOUD_LOCATION
+            location=settings.GOOGLE_CLOUD_LOCATION,
         )
         app.state.orchestrator = TravelOrchestratorAgent(client)
-        logger.info("Google GenAI client and TravelOrchestrator initialized successfully")
+        logger.info(
+            "Google GenAI client and TravelOrchestrator initialized successfully"
+        )
     except Exception as e:
         logger.exception(f"Startup error initializing Google GenAI Client: {e}")
         # Allow fallback initialization for local testing/pytest mock scenarios
         app.state.orchestrator = None
-        
+
     yield
     logger.info("WanderAI shutting down...")
 
@@ -58,7 +74,7 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
     docs_url="/docs",
-    redoc_url=None
+    redoc_url=None,
 )
 
 # ====================================================
@@ -69,13 +85,14 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Restrict this to actual domains in final production
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
 
 # GZip compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 
 # Request Size Limit Middleware (1MB limit)
 @app.middleware("http")
@@ -88,15 +105,16 @@ async def limit_request_size(request: Request, call_next):
                 if length > 1024 * 1024:  # 1 MB
                     logger.warning(f"Payload too large: {length} bytes")
                     return HTMLResponse(
-                        content="Payload Too Large", 
-                        status_code=status.HTTP_413_PAYLOAD_TOO_LARGE
+                        content="Payload Too Large",
+                        status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                     )
             except ValueError:
                 return HTMLResponse(
-                    content="Invalid Content-Length Header", 
-                    status_code=status.HTTP_400_BAD_REQUEST
+                    content="Invalid Content-Length Header",
+                    status_code=status.HTTP_400_BAD_REQUEST,
                 )
     return await call_next(request)
+
 
 # Secure Headers Middleware
 @app.middleware("http")
@@ -116,8 +134,10 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     return response
 
+
 # Setup templates
 templates = Jinja2Templates(directory="templates")
+
 
 # Dependency Injection for Orchestrator
 def get_orchestrator(request: Request) -> TravelOrchestratorAgent:
@@ -125,13 +145,15 @@ def get_orchestrator(request: Request) -> TravelOrchestratorAgent:
     if not orchestrator:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="AI planning service is currently unavailable. Please verify API configuration."
+            detail="AI planning service is currently unavailable. Please verify API configuration.",
         )
     return orchestrator
+
 
 # ====================================================
 # FASTAPI ENDPOINTS
 # ====================================================
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -144,41 +166,38 @@ async def read_root(request: Request):
 async def health_check():
     """Simple health check endpoint for Cloud Run/Kubernetes."""
     logger.debug("Health check requested")
-    return {
-        "status": "ok",
-        "service": "WanderAI"
-    }
+    return {"status": "ok", "service": "WanderAI"}
 
 
 @app.post("/chat")
 async def chat_endpoint(
-    request: ChatRequest, 
-    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator)
+    request: ChatRequest,
+    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator),
 ):
     """Orchestrates multi-turn chat conversations with memory & context."""
     # Ensure session_id exists
     session_id = request.session_id or str(uuid.uuid4())
     logger.info(f"Chat request received for session: {session_id}")
-    
+
     try:
         response_data = await orchestrator.chat(
             message=request.message,
             session_id=session_id,
-            destination=request.destination
+            destination=request.destination,
         )
         return response_data
     except Exception as e:
         logger.exception(f"Unhandled error in chat endpoint: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred processing your chat query."
+            detail="An error occurred processing your chat query.",
         )
 
 
 @app.post("/weather")
 async def weather_endpoint(
     request: WeatherRequest,
-    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator)
+    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator),
 ):
     """Direct weather lookup endpoint invoking WeatherAgent."""
     logger.info(f"Weather lookup request for: {request.destination}")
@@ -189,29 +208,31 @@ async def weather_endpoint(
         logger.exception(f"Error in weather endpoint: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve weather for {request.destination}."
+            detail=f"Failed to retrieve weather for {request.destination}.",
         )
 
 
 @app.post("/itinerary")
 async def itinerary_endpoint(
     request: TravelPlanRequest,
-    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator)
+    orchestrator: TravelOrchestratorAgent = Depends(get_orchestrator),
 ):
     """Direct itinerary generation endpoint invoking ItineraryAgent."""
-    logger.info(f"Itinerary generation request for: {request.destination} ({request.days} days)")
+    logger.info(
+        f"Itinerary generation request for: {request.destination} ({request.days} days)"
+    )
     try:
         itinerary_details = await orchestrator.itinerary_agent.generate(
             destination=request.destination,
             days=request.days,
             budget=request.budget,
             interests=request.interests,
-            travelers=request.travelers
+            travelers=request.travelers,
         )
         return itinerary_details.model_dump()
     except Exception as e:
         logger.exception(f"Error in itinerary endpoint: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to generate itinerary for {request.destination}."
+            detail=f"Failed to generate itinerary for {request.destination}.",
         )
